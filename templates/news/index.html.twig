@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}News{% endblock %}
+
+{% block body %}
+
+    {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+    {% endif %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Date</th>
+            {% if is_granted('ROLE_ADMIN') %}
+            <th scope="col">Action</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for news in paginate.results %}
+            <tr>
+                <td> <img alt="{{ news.title }}" src="{{ news.image }}" width="250"  /> </td>
+                <td> {{ news.title }}</td>
+                <td> {{ news.ShortDescription | raw }} </td>
+                <td> {{ news.updatedAt|format_datetime('long', 'medium', '', 'UTC') }} </td>
+                <td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <form
+                                action="{{ url('app_news_delete', {id: news.id}) }}"
+                                id="delete-form"
+                                method="post"
+                                onSubmit="if(!confirm('Do you want to delete this news?')){return false;}"
+                        >
+                            <input type="hidden" name="token" value="{{ csrf_token('delete') }}" />
+                            <input class="btn btn-danger" type="submit"   value="Delete"/>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <th scope="row"> -</th>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if paginate.hasToPaginate %}
+        <div class="navigation text-center">
+            <ul class="pagination">
+                {% if paginate.hasPreviousPage %}
+                    <li class="page-item"><a class="page-link"
+                                             href="{{ path('app_news_paginated', {page: paginate.previousPage}) }}"
+                                             rel="previous"><i class="fa fw fa-long-arrow-left"></i> previous </a></li>
+                {% else %}
+                    <li class="page-item"><span class="page-link"> previous  </span></li>
+                {% endif %}
+
+                {% for i in 1..paginate.lastPage %}
+                    {% if i == paginate.currentPage %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ i }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link"
+                                                 href="{{ path('app_news_paginated', {page: i}) }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if paginate.hasNextPage %}
+                    <li class="page-item"><a class="page-link"
+                                             href="{{ path('app_news_paginated', {page: paginate.nextPage}) }}"
+                                             rel="next"> next <i class="fa fw fa-arrow-right"></i></a></li>
+                {% else %}
+                    <li class="page-item"><span class="page-link"> next  </span></li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock %}

@@ -11,34 +11,34 @@ final class ProcessFeeds
 
      private $feed;
 
-     public function __construct(object $feed)
+     public function __construct(array $feed)
      {
          $this->feed = $feed;
      }
 
     public function getTitle(): string
     {
-        return $this->feed->getTitle();
+        return $this->feed['title'];
     }
 
     public function getDescription():string
     {
-        return $this->feed->getContent();
+        return $this->feed['description'];
     }
 
     public function getPublishedDate():\DateTimeImmutable
     {
-         return $this->feed->getPublishedDate();
+         return \DateTimeImmutable::createFromMutable($this->feed['publishedDate']);
     }
 
     public function getUpdatedDate():\DateTimeImmutable
     {
-        return $this->feed->getUpdatedDate();
+        return \DateTimeImmutable::createFromMutable($this->feed['updatedDate']);
     }
 
     public function getImage():string
     {
-        return $this->feed->getEnclosureUrl();
+        return $this->feed['image'];
     }
 
 }

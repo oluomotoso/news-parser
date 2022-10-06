@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\News;
+use App\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,15 @@ class NewsRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function fetchLatestNews(int $page = 1 ): Paginator
+    {
+        $qb = $this->createQueryBuilder('news')
+            ->addSelect()
+            ->orderBy('news.updated_at', 'DESC');
+
+        return (new Paginator($qb))->paginate($page);
     }
 
 //    /**

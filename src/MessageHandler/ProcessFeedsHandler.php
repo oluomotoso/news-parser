@@ -6,6 +6,7 @@ use App\Entity\News;
 use App\Message\ProcessFeeds;
 use App\Repository\NewsRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 final class ProcessFeedsHandler implements MessageHandlerInterface

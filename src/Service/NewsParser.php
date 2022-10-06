@@ -55,8 +55,17 @@ class NewsParser
     public function fetchNews($url)
     {
         $feed = $this->discoverFeeds($url);
+        $myFeed=[];
+
         foreach ($feed->items as $item){
-            $this->bus->dispatch(new ProcessFeeds($item));
+            $myFeed['title']=$item->getTitle();
+            $myFeed['description']=$item->getContent();
+            $myFeed['publishedDate']=$item->getPublishedDate();
+            $myFeed['updatedDate']=$item->getUpdatedDate();
+            $myFeed['image']=$item->getEnclosureUrl();
+
+            $this->logger->info(print_r($myFeed));
+            $this->bus->dispatch(new ProcessFeeds($myFeed));
         }
     }
 
